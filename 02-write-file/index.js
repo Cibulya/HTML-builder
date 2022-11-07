@@ -23,7 +23,7 @@ function write() {
   readLine.question('Напишите что-то  ', text => {
     console.log(text);
     if (text.toLocaleLowerCase() === 'exit') {
-      console.log('\n До свидания');
+      console.log('\n',' До свидания');
       readLine.close();
       return;
     }
