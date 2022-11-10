@@ -1,78 +1,34 @@
 const fs = require('fs')
 const path = require('path');
 
+const stylesLocation = path.join(__dirname, 'styles');
 
+const pathTobundleCss = path.join(__dirname, 'project-dist', 'bundle.css');
 
+const writebleStream = fs.createWriteStream(pathTobundleCss);
 
-// const stylesLocation = path.join(__dirname, 'styles');
+const filesList = fs.promises.readdir(stylesLocation);
 
-// const pathTobundleCss = path.join(__dirname, 'project-dist', 'bundle.css');
+filesList
+  .then(async data => {
 
-// const writebleStream =  fs.createWriteStream(pathTobundleCss);
+    for (let i = 0; i < data.length; i++) {
 
+      const files = await fs.promises.readdir(stylesLocation);
 
-// fs.promises.readdir(stylesLocation)
-  
-//   .then(async data => {
+      const filesPaths = path.join(stylesLocation, files[i]);
 
-//     for (let i = 0; i < data.length; i++){
+      // console.log(files[i])
 
-//       const files = await fs.promises.readdir(stylesLocation);
+      if (files[i].includes('css')) {
 
-//       const filesPaths = path.join(stylesLocation, files[i]);
+        const readStr = fs.createReadStream(path.join(stylesLocation, path.basename(filesPaths)));
 
-//       console.log(files[i])
-      
-//       if (files[i].includes('css')) {
+        readStr.on('data', data => {
 
-//         const readStr = fs.createReadStream(path.join(stylesLocation, path.basename(filesPaths)));
-
-//         readStr.on('data', data => {
-
-//           writebleStream.write(data.toString()+'\n')
-//         })
-//       }
-//     }
-//   })
-//   .catch(err => {
-//     console.log(err)
-//   })
-
-const mergeStyles = async () => {
-
-  try {
-    const stylesLocation = path.join(__dirname, 'styles');
-
-    const pathTobundleCss = path.join(__dirname, 'project-dist', 'bundle.css');
-
-    const writebleStream = fs.createWriteStream(pathTobundleCss);
-
-    fs.promises.readdir(stylesLocation)
-  
-      .then(async data => {
-
-        for (let i = 0; i < data.length; i++) {
-
-          const files = await fs.promises.readdir(stylesLocation);
-
-          const filesPaths = path.join(stylesLocation, files[i]);
-
-          console.log(files[i])
-      
-          if (files[i].includes('css')) {
-
-            const readStr = fs.createReadStream(path.join(stylesLocation, path.basename(filesPaths)));
-
-            readStr.on('data', data => {
-
-              writebleStream.write(data.toString() + '\n')
-            })
-          }
-        }
-      })
-
-  }
-  catch (err) { }
-};
-
-mergeStyles();
+          writebleStream.write(data.toString() + '\n')
+        })
+      }
+    }
+  })
+  .catch(err=>console.log(err))
