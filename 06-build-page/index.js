@@ -16,19 +16,20 @@ const writeIndexHtml = async() => {
     const htmlTempl = path.join(__dirname, 'template.html');
     // console.log(htmlTempl);
     const pathToIndex = path.join(pathToDist, 'index.html');
-
-    const readAndReplace = async () => {
+    let readTempl = await fs.promises.readFile(htmlTempl, { encoding: 'utf-8' });
+    let writeIndex = await fs.promises.writeFile(pathToIndex, readTempl); //create index.html
+    async function readAndReplace() {
       const readComps = await fs.promises.readdir(compPath, { encoding: 'utf-8' });
-      for (let i = 0; i < readComps.length; i++){
+      for (let i = 0; i < readComps.length; i++) {
         let filePath = path.join(compPath, `${readComps[i]}`);
         let fileName = path.basename(`${readComps[i]}`, '.html');
-        let fileInner = (await fs.promises.readFile(filePath, { encoding: 'utf-8' })).toString();
-        const readTempl = await fs.promises.readFile(htmlTempl, { encoding: 'utf-8' });
-        // const writeIndex = await fs.promises.writeFile(pathToIndex, readTempl); //create index.html
-        const indexInner = await fs.promises.readFile(pathToIndex, { encoding: 'utf-8' });
-        const newIndex = indexInner.replace(`{{${fileName}}}`, fileInner);
-        let fileIndex = await fs.promises.writeFile(path.join(pathToDist, 'index.html'), newIndex);
-        i++;
+        let fileInner = (await fs.promises.readFile(filePath, { encoding: 'utf-8' }));
+
+        let indexInner = await fs.promises.readFile(pathToIndex, { encoding: 'utf-8' });
+        let newIndex = indexInner.replace(`{{${fileName}}}`, fileInner);
+
+
+        await fs.promises.writeFile(pathToIndex, newIndex);
       }
     }
     readAndReplace();
@@ -79,5 +80,38 @@ filesList
 
 
 
+// const assetsDistPath = path.join(pathToDist, 'assets');
+
+// const newAssets =  fs.promises.mkdir(assetsDistPath);
+// const assetsSourcePath = path.join(__dirname, 'assets');
 
 
+
+// files
+//   .then(async data => {
+//     for (let i = 0; i < data.length; i++){
+//      await fs.promises.readdir(assetsSourcePath);
+//       const file = await fs.promises.readdir(assetsSourcePath);
+//       const filesPaths = path.join(assetsSourcePath, file[i])
+      
+//       console.log(filesPaths)
+      
+//     }
+// })
+// .catch(err=>console.log(err))
+
+async function copyAssets() {
+  try {
+    const assetsDistPath = path.join(pathToDist, 'assets');
+    const newAssets =  await fs.promises.mkdir(assetsDistPath);
+    const assetsSourcePath = path.join(__dirname, 'assets');
+    const files =  fs.readdir(assetsSourcePath)
+    for (let i = 0; i < assetsSourcePath.length; i++){
+      console.log(files)
+    }
+  }
+  catch {
+    
+  }
+}
+copyAssets();
